@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Wallet as WalletIcon, Ticket, Trophy, Star, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Survey from "@/components/Survey";
 
 const Wallet = () => {
+  const [showSurvey, setShowSurvey] = useState(true);
   const tickets = [
     {
       id: 1,
@@ -154,6 +157,17 @@ const Wallet = () => {
             </Card>
           </div>
         </section>
+
+        <Survey open={showSurvey} onComplete={() => setShowSurvey(false)} />
+
+        <div className="text-center">
+          <Button
+            variant="outline"
+            onClick={() => setShowSurvey(true)}
+          >
+            Simular Pesquisa
+          </Button>
+        </div>
       </div>
     </div>
   );
