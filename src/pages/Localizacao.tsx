@@ -1,8 +1,31 @@
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { MapPin, Phone, Clock, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import arqInferior from "@/assets/arq_inferior.jpeg";
+import arqSuperior from "@/assets/arq_superior.jpeg";
+import camarotes from "@/assets/camarotes.jpeg";
 
 const Localizacao = () => {
+  const [showMapDialog, setShowMapDialog] = useState(false);
+  const [selectedMap, setSelectedMap] = useState<string | null>(null);
+
+  const mapOptions = [
+    { id: "inferior", name: "Arquibancada Inferior", image: arqInferior },
+    { id: "superior", name: "Arquibancada Superior", image: arqSuperior },
+    { id: "camarotes", name: "Camarotes", image: camarotes },
+  ];
+
+  const handleMapSelect = (mapId: string) => {
+    setSelectedMap(mapId);
+    setShowMapDialog(false);
+  };
   const locations = [
     {
       id: 1,
@@ -42,18 +65,62 @@ const Localizacao = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 space-y-6">
-        {/* Map Placeholder */}
+        {/* Interactive Map */}
         <Card className="overflow-hidden shadow-card">
-          <div className="h-64 bg-muted relative flex items-center justify-center">
-            <div className="text-center space-y-2">
-              <MapPin className="h-12 w-12 text-primary mx-auto" />
-              <p className="text-muted-foreground">Mapa Interativo</p>
-              <p className="text-sm text-muted-foreground">
-                Em breve: navegação em tempo real
-              </p>
+          {selectedMap ? (
+            <div className="relative">
+              <img
+                src={mapOptions.find((m) => m.id === selectedMap)?.image}
+                alt={mapOptions.find((m) => m.id === selectedMap)?.name}
+                className="w-full h-auto"
+              />
+              <Button
+                onClick={() => setShowMapDialog(true)}
+                className="absolute bottom-4 right-4 gradient-primary text-white hover-glow"
+              >
+                Trocar Mapa
+              </Button>
             </div>
-          </div>
+          ) : (
+            <div className="h-64 bg-muted relative flex items-center justify-center">
+              <div className="text-center space-y-4">
+                <MapPin className="h-12 w-12 text-primary mx-auto" />
+                <p className="text-muted-foreground font-semibold">
+                  Mapa Interativo
+                </p>
+                <Button
+                  onClick={() => setShowMapDialog(true)}
+                  className="gradient-primary text-white hover-glow"
+                >
+                  Acessar Mapa
+                </Button>
+              </div>
+            </div>
+          )}
         </Card>
+
+        {/* Map Selection Dialog */}
+        <Dialog open={showMapDialog} onOpenChange={setShowMapDialog}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-center text-xl">
+                Escolha o Mapa
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 py-4">
+              {mapOptions.map((option) => (
+                <Button
+                  key={option.id}
+                  onClick={() => handleMapSelect(option.id)}
+                  variant="outline"
+                  className="w-full h-auto py-4 text-lg hover-lift"
+                >
+                  {option.name}
+                </Button>
+              ))}
+            </div>
+          </DialogContent>
+        </Dialog>
 
         {/* Contact Info */}
         <Card className="p-6 shadow-card space-y-4">
